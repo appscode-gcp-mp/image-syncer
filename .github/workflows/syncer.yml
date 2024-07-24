@@ -1,0 +1,126 @@
+name: Syncer
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - uses: imjasonh/setup-crane@v0.1
+
+    - name: Log in to the GitHub Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: 1gtm
+        password: ${{ secrets.LGTM_GITHUB_TOKEN }}
+
+    - name: Sync
+      run: |
+        set -x
+        TAG=0.1.20240704
+        crane cp alpine:3.20.2 ghcr.io/appscode-gcp-mp/ace-mp/alpine:$TAG
+        crane cp coredns/coredns:1.11.0 ghcr.io/appscode-gcp-mp/ace-mp/coredns:$TAG
+        crane cp gcr.io/k8s-staging-ingressconformance/echoserver:v20221109-7ee2f3e ghcr.io/appscode-gcp-mp/ace-mp/echoserver:$TAG
+        crane cp ghcr.io/appscode-images/nats:2.10.18-alpine ghcr.io/appscode-gcp-mp/ace-mp/nats:$TAG
+        crane cp ghcr.io/appscode-images/postgres:15.5-alpine ghcr.io/appscode-gcp-mp/ace-mp/postgres:$TAG
+        crane cp ghcr.io/appscode-images/redis:7.2.4-bookworm ghcr.io/appscode-gcp-mp/ace-mp/redis:$TAG
+        crane cp ghcr.io/appscode/b3:v2024.7.4 ghcr.io/appscode-gcp-mp/ace-mp/b3:$TAG
+        crane cp ghcr.io/appscode/capi-ops-manager:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/capi-ops-manager:$TAG
+        crane cp ghcr.io/appscode/catalog-manager:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/catalog-manager:$TAG
+        crane cp ghcr.io/appscode/cluster-ui:0.9.5 ghcr.io/appscode-gcp-mp/ace-mp/cluster-ui:$TAG
+        crane cp ghcr.io/appscode/csi-driver-cacerts:v0.0.4 ghcr.io/appscode-gcp-mp/ace-mp/csi-driver-cacerts:$TAG
+        crane cp ghcr.io/appscode/docker-machine-operator:v0.0.4 ghcr.io/appscode-gcp-mp/ace-mp/docker-machine-operator:$TAG
+        crane cp ghcr.io/appscode/external-dns-operator:v0.0.8 ghcr.io/appscode-gcp-mp/ace-mp/external-dns-operator:$TAG
+        crane cp ghcr.io/appscode/fileserver:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/fileserver:$TAG
+        crane cp ghcr.io/appscode/flux-cli:v2.3.0 ghcr.io/appscode-gcp-mp/ace-mp/flux-cli:$TAG
+        crane cp ghcr.io/appscode/grafana-tools:v0.0.9 ghcr.io/appscode-gcp-mp/ace-mp/grafana-tools:$TAG
+        crane cp ghcr.io/appscode/grafana:v2024.7.7 ghcr.io/appscode-gcp-mp/ace-mp/grafana:$TAG
+        crane cp ghcr.io/appscode/k8s-wait-for:v2.0 ghcr.io/appscode-gcp-mp/ace-mp/k8s-wait-for:$TAG
+        crane cp ghcr.io/appscode/kube-rbac-proxy:v0.15.0 ghcr.io/appscode-gcp-mp/ace-mp/kube-rbac-proxy:$TAG
+        crane cp ghcr.io/appscode/kube-ui-server:v0.0.44 ghcr.io/appscode-gcp-mp/ace-mp/kube-ui-server:$TAG
+        crane cp ghcr.io/appscode/kubedb-ui:0.7.3 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-ui:$TAG
+        crane cp ghcr.io/appscode/license-proxyserver:v0.0.14 ghcr.io/appscode-gcp-mp/ace-mp/license-proxyserver:$TAG
+        crane cp ghcr.io/appscode/maxmind-geoip:city-mmdb-latest ghcr.io/appscode-gcp-mp/ace-mp/maxmind-geoip:$TAG
+        crane cp ghcr.io/appscode/openfga:v1.5.7 ghcr.io/appscode-gcp-mp/ace-mp/openfga:$TAG
+        crane cp ghcr.io/appscode/panopticon:v0.0.13 ghcr.io/appscode-gcp-mp/ace-mp/panopticon:$TAG
+        crane cp ghcr.io/appscode/petset:v0.0.6 ghcr.io/appscode-gcp-mp/ace-mp/petset:$TAG
+        crane cp ghcr.io/appscode/platform-ui:0.8.4 ghcr.io/appscode-gcp-mp/ace-mp/platform-ui:$TAG
+        crane cp ghcr.io/appscode/prom-authproxy:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/prom-authproxy:$TAG
+        crane cp ghcr.io/appscode/reloader:v1.0.79 ghcr.io/appscode-gcp-mp/ace-mp/reloader:$TAG
+        crane cp ghcr.io/appscode/s3proxy:sha-a82ca68 ghcr.io/appscode-gcp-mp/ace-mp/s3proxy:$TAG
+        crane cp ghcr.io/appscode/service-provider:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/service-provider:$TAG
+        crane cp ghcr.io/appscode/sidekick:v0.0.5 ghcr.io/appscode-gcp-mp/ace-mp/sidekick:$TAG
+        crane cp ghcr.io/appscode/supervisor:v0.0.4 ghcr.io/appscode-gcp-mp/ace-mp/supervisor:$TAG
+        crane cp ghcr.io/appscode/trickster:v2.0.0-beta3 ghcr.io/appscode-gcp-mp/ace-mp/trickster:$TAG
+        crane cp ghcr.io/appscode/vcluster-plugin:v0.0.1 ghcr.io/appscode-gcp-mp/ace-mp/vcluster-plugin:$TAG
+        crane cp ghcr.io/fluxcd/helm-controller:v1.0.1 ghcr.io/appscode-gcp-mp/ace-mp/flux-helm-controller:$TAG
+        crane cp ghcr.io/fluxcd/source-controller:v1.3.0 ghcr.io/appscode-gcp-mp/ace-mp/flux-source-controller:$TAG
+        crane cp ghcr.io/kedacore/http-add-on-interceptor:0.8.0 ghcr.io/appscode-gcp-mp/ace-mp/keda-http-add-on-interceptor:$TAG
+        crane cp ghcr.io/kedacore/http-add-on-operator:0.8.0 ghcr.io/appscode-gcp-mp/ace-mp/keda-http-add-on-operator:$TAG
+        crane cp ghcr.io/kedacore/http-add-on-scaler:0.8.0 ghcr.io/appscode-gcp-mp/ace-mp/keda-http-add-on-scaler:$TAG
+        crane cp ghcr.io/kedacore/keda-admission-webhooks:2.14.0 ghcr.io/appscode-gcp-mp/ace-mp/keda-admission-webhooks:$TAG
+        crane cp ghcr.io/kedacore/keda-metrics-apiserver:2.14.0 ghcr.io/appscode-gcp-mp/ace-mp/keda-metrics-apiserver:$TAG
+        crane cp ghcr.io/kedacore/keda:2.14.0 ghcr.io/appscode-gcp-mp/ace-mp/keda:$TAG
+        crane cp ghcr.io/kluster-manager/cluster-auth:v0.0.3 ghcr.io/appscode-gcp-mp/ace-mp/cluster-auth:$TAG
+        crane cp ghcr.io/kluster-manager/cluster-gateway-manager:v1.9.0 ghcr.io/appscode-gcp-mp/ace-mp/cluster-gateway-manager:$TAG
+        crane cp ghcr.io/kluster-manager/cluster-gateway:v1.9.0 ghcr.io/appscode-gcp-mp/ace-mp/cluster-gateway:$TAG
+        crane cp ghcr.io/kluster-manager/cluster-proxy:v0.5.0 ghcr.io/appscode-gcp-mp/ace-mp/cluster-proxy:$TAG
+        crane cp ghcr.io/kluster-manager/fluxcd-addon:v0.0.4 ghcr.io/appscode-gcp-mp/ace-mp/fluxcd-addon:$TAG
+        crane cp ghcr.io/kluster-manager/managed-serviceaccount:v0.6.0 ghcr.io/appscode-gcp-mp/ace-mp/managed-serviceaccount:$TAG
+        crane cp ghcr.io/kubedb/kubedb-autoscaler:v0.31.0 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-autoscaler:$TAG
+        crane cp ghcr.io/kubedb/kubedb-crd-manager:v0.1.0 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-crd-manager:$TAG
+        crane cp ghcr.io/kubedb/kubedb-ops-manager:v0.33.1 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-ops-manager:$TAG
+        crane cp ghcr.io/kubedb/kubedb-provisioner:v0.46.1 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-provisioner:$TAG
+        crane cp ghcr.io/kubedb/kubedb-ui-server:v0.22.0 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-ui-server:$TAG
+        crane cp ghcr.io/kubedb/kubedb-webhook-server:v0.22.0 ghcr.io/appscode-gcp-mp/ace-mp/kubedb-webhook-server:$TAG
+        crane cp ghcr.io/kubedb/pg-coordinator:v0.30.0 ghcr.io/appscode-gcp-mp/ace-mp/pg-coordinator:$TAG
+        crane cp ghcr.io/kubedb/postgres-archiver:v0.7.0_15.5-alpine ghcr.io/appscode-gcp-mp/ace-mp/postgres-archiver:$TAG
+        crane cp ghcr.io/kubedb/postgres-init:0.13.0 ghcr.io/appscode-gcp-mp/ace-mp/postgres-init:$TAG
+        crane cp ghcr.io/kubedb/postgres-restic-plugin:v0.9.0 ghcr.io/appscode-gcp-mp/ace-mp/postgres-restic-plugin:$TAG
+        crane cp ghcr.io/kubedb/redis-coordinator:v0.25.0 ghcr.io/appscode-gcp-mp/ace-mp/redis-coordinator:$TAG
+        crane cp ghcr.io/kubedb/redis-init:0.8.0 ghcr.io/appscode-gcp-mp/ace-mp/redis-init:$TAG
+        crane cp ghcr.io/kubedb/redis-restic-plugin:v0.9.0 ghcr.io/appscode-gcp-mp/ace-mp/redis-restic-plugin:$TAG
+        crane cp ghcr.io/kubedb/redis_exporter:1.58.0 ghcr.io/appscode-gcp-mp/ace-mp/redis_exporter:$TAG
+        crane cp ghcr.io/kubestash/kubestash:v0.10.0 ghcr.io/appscode-gcp-mp/ace-mp/kubestash:$TAG
+        crane cp ghcr.io/kubevault/vault-operator:v0.18.0 ghcr.io/appscode-gcp-mp/ace-mp/vault-operator:$TAG
+        crane cp ghcr.io/kubevault/vault-operator:v0.18.1 ghcr.io/appscode-gcp-mp/ace-mp/vault-operator:$TAG
+        crane cp ghcr.io/loft-sh/vcluster:0.19.7 ghcr.io/appscode-gcp-mp/ace-mp/vcluster:$TAG
+        crane cp ghcr.io/voyagermesh/gateway:v0.6.3 ghcr.io/appscode-gcp-mp/ace-mp/gateway:$TAG
+        crane cp k0sproject/k0s:v1.29.1-k0s.0 ghcr.io/appscode-gcp-mp/ace-mp/k0s:$TAG
+        crane cp natsio/nats-server-config-reloader:0.15.0 ghcr.io/appscode-gcp-mp/ace-mp/nats-server-config-reloader:$TAG
+        crane cp natsio/prometheus-nats-exporter:0.15.0 ghcr.io/appscode-gcp-mp/ace-mp/prometheus-nats-exporter:$TAG
+        crane cp prometheuscommunity/postgres-exporter:v0.15.0 ghcr.io/appscode-gcp-mp/ace-mp/postgres-exporter:$TAG
+        crane cp quay.io/jetstack/cert-manager-acmesolver:v1.15.2 ghcr.io/appscode-gcp-mp/ace-mp/cert-manager-acmesolver:$TAG
+        crane cp quay.io/jetstack/cert-manager-cainjector:v1.15.2 ghcr.io/appscode-gcp-mp/ace-mp/cert-manager-cainjector:$TAG
+        crane cp quay.io/jetstack/cert-manager-controller:v1.15.2 ghcr.io/appscode-gcp-mp/ace-mp/cert-manager-controller:$TAG
+        crane cp quay.io/jetstack/cert-manager-startupapicheck:v1.15.2 ghcr.io/appscode-gcp-mp/ace-mp/cert-manager-startupapicheck:$TAG
+        crane cp quay.io/jetstack/cert-manager-webhook:v1.15.2 ghcr.io/appscode-gcp-mp/ace-mp/cert-manager-webhook:$TAG
+        crane cp quay.io/open-cluster-management/addon-manager:v0.14.0 ghcr.io/appscode-gcp-mp/ace-mp/addon-manager:$TAG
+        crane cp quay.io/open-cluster-management/placement:v0.14.0 ghcr.io/appscode-gcp-mp/ace-mp/placement:$TAG
+        crane cp quay.io/open-cluster-management/registration-operator:v0.14.0 ghcr.io/appscode-gcp-mp/ace-mp/registration-operator:$TAG
+        crane cp quay.io/open-cluster-management/registration:v0.14.0 ghcr.io/appscode-gcp-mp/ace-mp/registration:$TAG
+        crane cp quay.io/open-cluster-management/work:v0.14.0 ghcr.io/appscode-gcp-mp/ace-mp/work:$TAG
+        crane cp quay.io/prometheus-operator/prometheus-config-reloader:v0.75.2 ghcr.io/appscode-gcp-mp/ace-mp/prometheus-config-reloader:$TAG
+        # https://github.com/open-viz/prometheus-operator/tree/ac-0.75.2
+        # crane cp quay.io/prometheus-operator/prometheus-operator:v0.75.2 ghcr.io/appscode-gcp-mp/ace-mp/prometheus-operator:$TAG
+        crane cp quay.io/prometheus/alertmanager:v0.27.0 ghcr.io/appscode-gcp-mp/ace-mp/alertmanager:$TAG
+        crane cp quay.io/prometheus/node-exporter:v1.8.2 ghcr.io/appscode-gcp-mp/ace-mp/node-exporter:$TAG
+        crane cp quay.io/prometheus/prometheus:v2.54.0 ghcr.io/appscode-gcp-mp/ace-mp/prometheus:$TAG
+        crane cp registry.k8s.io/ingress-nginx/controller:v1.11.1 ghcr.io/appscode-gcp-mp/ace-mp/ingress-nginx-controller:$TAG
+        crane cp registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20221220-controller-v1.5.1-58-g787ea74b6 ghcr.io/appscode-gcp-mp/ace-mp/ingress-nginx-kube-webhook-certgen:$TAG
+        crane cp registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0 ghcr.io/appscode-gcp-mp/ace-mp/kube-state-metrics:$TAG
+        crane cp registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.11.2 ghcr.io/appscode-gcp-mp/ace-mp/prometheus-adapter:$TAG
+        crane cp registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.11.1 ghcr.io/appscode-gcp-mp/ace-mp/csi-node-driver-registrar:$TAG
+        crane cp registry.k8s.io/sig-storage/livenessprobe:v2.13.1 ghcr.io/appscode-gcp-mp/ace-mp/csi-driver-livenessprobe:$TAG
